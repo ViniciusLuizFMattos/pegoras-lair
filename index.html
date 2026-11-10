@@ -173,7 +173,32 @@ footer{text-align:center;color:var(--mut);margin-top:44px;font-size:14px}
 .lvgrid button.w{background:var(--ok);color:#06240f}
 .lvgrid button.cur{outline:2px solid var(--acc)}
 .peg.tg{border:2px dashed var(--ok)}
-@media (max-width:520px){.lvgrid{grid-template-columns:repeat(5,1fr)}.top h2{font-size:20px}.hero{padding-top:30px}}
+/* CRUZADAS */
+.cw{display:grid;gap:2px;padding:8px;background:#2b2560;border-radius:12px}
+.cw .c{position:relative;width:var(--cs);height:var(--cs);background:#fff8e7;border-radius:3px}
+.cw .c.blk{background:transparent}
+.cw .c input{width:100%;height:100%;border:0;background:transparent;text-align:center;font-weight:800;font-size:calc(var(--cs)*.55);text-transform:uppercase;color:#1a1646;padding:0;outline:0;caret-color:transparent;font-family:inherit}
+.cw .c b{position:absolute;top:1px;left:2px;font-size:calc(var(--cs)*.28);color:#6a5acd;pointer-events:none;line-height:1}
+.cw .c.hl{background:#ffe9a8}.cw .c.cur{background:#ffd166}.cw .c.bad input{color:var(--bad)}
+.clues{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:min(94vw,760px)}
+.clues h4{margin:0 0 6px;color:var(--acc)}
+.clues ol{list-style:none;margin:0;padding:0;font-size:14px;line-height:1.4}
+.clues li{padding:5px 8px;border-radius:8px;cursor:pointer}.clues li:hover{background:rgba(255,255,255,.08)}.clues li.on{background:rgba(255,209,102,.25)}
+.actclue{min-height:24px;font-weight:700;text-align:center;max-width:94vw}
+/* LOGICA */
+.lg{width:min(94vw,640px);display:flex;flex-direction:column;gap:12px}
+.lgbox{padding:14px 16px;border-radius:14px;background:var(--card);border:1px solid var(--line)}
+.lgbox ol{margin:8px 0 0;padding-left:22px;line-height:1.65}
+.lgq{font-size:21px;font-weight:800;text-align:center;margin-bottom:10px}
+.tw{overflow-x:auto;margin-top:8px}
+.gridt{border-collapse:collapse;margin:6px auto}
+.gridt th,.gridt td{border:1px solid var(--line);padding:0;text-align:center;font-size:13px}
+.gridt th{padding:6px 8px;font-weight:600;color:var(--mut)}
+.gridt td button{width:38px;height:34px;background:none;font-weight:800;font-size:16px}
+.gridt td button.x{color:var(--bad)}.gridt td button.y{color:var(--ok)}
+.ans{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.ans .btn.no{background:var(--bad);opacity:.6}
+@media (max-width:520px){.clues{grid-template-columns:1fr}.lvgrid{grid-template-columns:repeat(5,1fr)}.top h2{font-size:20px}.hero{padding-top:30px}}
 </style>
 </head>
 <body>
@@ -504,6 +529,338 @@ function senha(root,api){
 /* ============================================================
    REGISTRO + NAVEGAÇÃO
    ============================================================ */
+/* ---- 13. PALAVRAS CRUZADAS ---- */
+function cruzadas(root,api){
+  const BANK=`CACHORRO|Melhor amigo do homem
+GATO|Felino doméstico que mia
+ELEFANTE|Maior animal terrestre
+GIRAFA|Animal de pescoço comprido
+TARTARUGA|Réptil de casco e passo lento
+GOLFINHO|Mamífero marinho muito inteligente
+PAPAGAIO|Ave que imita a fala humana
+BORBOLETA|Inseto de asas coloridas que vem da lagarta
+COELHO|Animal que come cenoura e salta
+LEAO|Rei da selva
+TUBARAO|Peixe predador de nadadeira dorsal famosa
+BALEIA|Maior mamífero do planeta
+MACACO|Primata que adora banana
+CAVALO|Animal de montaria
+GALINHA|Ave que bota ovos na granja
+PINGUIM|Ave que não voa e vive no gelo
+JACARE|Réptil de focinho comprido do Pantanal
+CAPIVARA|Maior roedor do mundo
+CORUJA|Ave noturna, símbolo da sabedoria
+ABELHA|Inseto que produz mel
+FORMIGA|Inseto trabalhador que vive em colônias
+ARANHA|Animal de oito patas que tece teias
+CAMELO|Animal do deserto com corcovas
+ZEBRA|Cavalo listrado africano
+BRIGADEIRO|Docinho de festa feito de chocolate
+FEIJOADA|Prato típico de feijão preto com carnes
+PAMONHA|Iguaria de milho verde
+COXINHA|Salgado em formato de gota recheado com frango
+MACARRAO|Massa do espaguete
+CHOCOLATE|Doce feito de cacau
+PASTEL|Massa frita vendida em feiras
+ABACAXI|Fruta de coroa espinhosa
+MANDIOCA|Raiz também chamada de aipim
+TAPIOCA|Goma de massa branca feita na frigideira
+BANANA|Fruta amarela preferida dos macacos
+MORANGO|Fruta vermelha com sementinhas por fora
+LARANJA|Fruta cítrica que vira suco
+MELANCIA|Fruta verde por fora e vermelha por dentro
+QUEIJO|Derivado do leite, amarelo ou branco
+PIPOCA|Milho estourado do cinema
+SORVETE|Sobremesa gelada de casquinha
+PIZZA|Prato italiano redondo com queijo
+HAMBURGUER|Sanduíche de carne no pão redondo
+PAO|Alimento assado vendido na padaria
+CAFE|Bebida preta e quente que desperta
+LEITE|Líquido branco que vem da vaca
+PRAIA|Faixa de areia à beira-mar
+MONTANHA|Grande elevação de terreno
+AEROPORTO|Local de pousos e decolagens
+BIBLIOTECA|Lugar cheio de livros para empréstimo
+CACHOEIRA|Queda d'água num rio
+FLORESTA|Grande área coberta de árvores
+ESTADIO|Local de jogos de futebol
+CASTELO|Residência fortificada de reis
+DESERTO|Região árida com muita areia
+ILHA|Terra cercada de água por todos os lados
+VULCAO|Montanha que pode expelir lava
+RIO|Curso de água que corre para o mar
+LAGO|Grande massa de água cercada de terra
+PONTE|Construção que liga as duas margens
+CIDADE|Grande aglomeração urbana
+ESCOLA|Onde se estuda
+HOSPITAL|Lugar onde se tratam doentes
+MUSEU|Local que expõe obras e objetos históricos
+TECLADO|Periférico com letras para digitar
+INTERNET|Rede mundial de computadores
+PROGRAMADOR|Quem escreve código
+ALGORITMO|Sequência de passos para resolver um problema
+NAVEGADOR|Programa para acessar sites
+SERVIDOR|Computador que fornece serviços na rede
+BATERIA|Fonte de energia do celular
+SATELITE|Orbita a Terra e transmite sinais
+ROBOTICA|Ciência que estuda os robôs
+PIXEL|Menor ponto de uma imagem digital
+MOUSE|Periférico que move o cursor
+MONITOR|Tela do computador
+CELULAR|Telefone que cabe no bolso
+SENHA|Segredo para entrar em contas
+ARQUIVO|Documento salvo no computador
+IMPRESSORA|Máquina que põe o digital no papel
+ENGENHEIRO|Projeta pontes e prédios
+PILOTO|Comanda um avião
+MEDICO|Cuida da saúde dos pacientes
+ARQUITETO|Desenha casas e edifícios
+PROFESSOR|Ensina na escola
+BOMBEIRO|Apaga incêndios
+CIENTISTA|Faz pesquisas e experimentos
+MUSICO|Quem toca instrumentos
+JORNALISTA|Escreve notícias
+MECANICO|Conserta motores
+PADEIRO|Faz o pão
+CARTEIRO|Entrega cartas
+DENTISTA|Cuida dos dentes
+ADVOGADO|Defende pessoas na justiça
+COZINHEIRO|Prepara refeições
+PLANETA|Corpo celeste como a Terra e Marte
+ESTRELA|Astro com luz própria, como o Sol
+GALAXIA|A Via Láctea é uma
+FOGUETE|Veículo que vai ao espaço
+GRAVIDADE|Força que nos mantém no chão
+OXIGENIO|Gás que respiramos
+ENERGIA|Capacidade de realizar trabalho
+MAGNETISMO|Força do ímã
+TERMOMETRO|Mede a temperatura
+MICROSCOPIO|Aparelho que aumenta o muito pequeno
+ASTRONAUTA|Viaja pelo espaço
+ECLIPSE|Quando a Lua cobre o Sol
+COMETA|Astro de cauda luminosa
+LUA|Satélite natural da Terra
+SOL|Estrela do nosso sistema
+FUTEBOL|Esporte do gol
+BASQUETE|Esporte da cesta
+VOLEI|Esporte da rede e da bola por cima
+NATACAO|Esporte feito na piscina
+TENIS|Esporte de raquete e quadra
+XADREZ|Jogo de rei e rainha em tabuleiro
+DAMAS|Jogo de peças redondas em tabuleiro quadriculado
+BARALHO|Conjunto de 52 cartas
+DOMINO|Jogo de peças com pintinhas
+SUDOKU|Quebra-cabeça de números 9x9
+CORRIDA|Competição de velocidade
+MARATONA|Corrida de 42 km
+GOLEIRO|Defende a meta
+ARBITRO|Apita o jogo
+CAMPEAO|Quem ganha o título
+VIOLAO|Instrumento de seis cordas
+PIANO|Instrumento de teclas pretas e brancas
+GUITARRA|Instrumento elétrico do rock
+CARNAVAL|Festa de fantasias e desfiles no Brasil
+CINEMA|Lugar para ver filmes na tela grande
+TEATRO|Arte de encenar peças
+POESIA|Texto em versos
+ROMANCE|Livro de ficção longa
+PINTURA|Arte de colorir telas
+ESCULTURA|Arte de modelar a pedra
+DANCA|Movimento ao ritmo da música
+SAMBA|Ritmo brasileiro do carnaval
+FORRO|Ritmo nordestino de festa junina
+ARCOIRIS|Fenômeno colorido que surge depois da chuva
+TEMPESTADE|Chuva forte com raios
+RELAMPAGO|Clarão no céu durante a chuva
+NEVE|Flocos brancos de inverno
+VENTO|Ar em movimento
+SEMENTE|Dela nasce a planta
+RAIZ|Parte da planta debaixo da terra
+FOLHA|Parte verde da árvore
+JARDIM|Espaço com flores
+OCEANO|Imensa massa de água salgada
+CORAL|Animal marinho que forma recifes
+GELADEIRA|Eletrodoméstico que conserva alimentos frios
+JANELA|Abertura da parede por onde entra luz
+ESPELHO|Reflete sua imagem
+TRAVESSEIRO|Onde se apoia a cabeça na cama
+CHAVE|Abre a porta
+RELOGIO|Marca as horas
+GUARDACHUVA|Protege da chuva
+MOCHILA|Bolsa carregada nas costas
+CADERNO|Onde se anotam as aulas
+LAPIS|Escreve e pode ser apagado com borracha
+BORRACHA|Apaga o que o lápis escreve
+TESOURA|Ferramenta para cortar papel
+BICICLETA|Veículo de duas rodas a pedal
+OCULOS|Ajuda quem enxerga mal
+CHAPEU|Cobre a cabeça do sol
+SAPATO|Calçado fechado
+BRASIL|País do futebol e do samba
+AMAZONIA|Maior floresta tropical do mundo
+PANTANAL|Maior planície alagável do planeta
+CURITIBA|Capital do Paraná
+BRASILIA|Capital federal do Brasil
+SALVADOR|Primeira capital do Brasil, na Bahia
+RECIFE|Capital de Pernambuco
+FORTALEZA|Capital do Ceará
+MANAUS|Capital do Amazonas
+BELEM|Capital do Pará`.split("\n").map(l=>l.trim().split("|"));
+  const SZ=15,target=6+Math.floor((api.level-1)/7),maxLen=[7,9,12][api.tier];
+  let W,H,cells,words,sel=null,dir=0,done=false;
+  const grid=h("div",{class:"cw"}),act=h("div",{class:"actclue"},"Toque em uma casa para começar"),clueBox=h("div",{class:"clues"}),msg=h("div",{class:"msg"});
+  function can(g,m,w,r,c,d){const dr=d?1:0,dc=d?0:1,L=w.length;
+    if(r+dr*(L-1)>=SZ||c+dc*(L-1)>=SZ)return -1;
+    const pr=r-dr,pc=c-dc,nr=r+dr*L,nc=c+dc*L;
+    if(pr>=0&&pc>=0&&g[pr][pc])return -1;if(nr<SZ&&nc<SZ&&g[nr][nc])return -1;
+    let x=0;
+    for(let i=0;i<L;i++){const rr=r+dr*i,cc=c+dc*i,ch=g[rr][cc];
+      if(ch){if(ch!==w[i]||(m[rr][cc]&(d?2:1)))return -1;x++;}
+      else{const a1=rr+dc,a2=cc+dr,b1=rr-dc,b2=cc-dr;if(a1<SZ&&a2<SZ&&g[a1][a2])return -1;if(b1>=0&&b2>=0&&g[b1][b2])return -1;}}
+    return x;}
+  function build(){
+    const pool=BANK.filter(([w])=>w.length<=maxLen);let best=null;
+    for(let att=0;att<25;att++){
+      const g=Array.from({length:SZ},()=>Array(SZ).fill("")),m=Array.from({length:SZ},()=>Array(SZ).fill(0)),placed=[];
+      const put=(e,r,c,d)=>{for(let i=0;i<e[0].length;i++){const rr=r+(d?i:0),cc=c+(d?0:i);g[rr][cc]=e[0][i];m[rr][cc]|=d?2:1;}placed.push({w:e[0],clue:e[1],r,c,d});};
+      const order=shuffle(pool.slice());const f=order.shift();put(f,Math.floor(SZ/2),Math.floor((SZ-f[0].length)/2),0);
+      for(const e of order){if(placed.length>=target)break;let bs=0,cand=[];
+        for(let d=0;d<2;d++)for(let r=0;r<SZ;r++)for(let c=0;c<SZ;c++){const x=can(g,m,e[0],r,c,d);if(x>bs){bs=x;cand=[[r,c,d]];}else if(x===bs&&x>0)cand.push([r,c,d]);}
+        if(bs>0){const [r,c,d]=cand[rnd(cand.length)];put(e,r,c,d);}}
+      if(!best||placed.length>best.length)best=placed;if(best.length>=target)break;
+    }
+    return best;}
+  function setup(){
+    const placed=build();let r0=99,r1=0,c0=99,c1=0;
+    for(const p of placed){r0=Math.min(r0,p.r);c0=Math.min(c0,p.c);r1=Math.max(r1,p.d?p.r+p.w.length-1:p.r);c1=Math.max(c1,p.d?p.c:p.c+p.w.length-1);}
+    H=r1-r0+1;W=c1-c0+1;cells=Array.from({length:H},()=>Array(W).fill(null));
+    words=placed.map(p=>({...p,r:p.r-r0,c:p.c-c0,cells:[]}));
+    const keys=[...new Set(words.map(w=>w.r*100+w.c))].sort((a,b)=>a-b);const numOf=new Map(keys.map((k,i)=>[k,i+1]));
+    words.forEach((w,wi)=>{w.n=numOf.get(w.r*100+w.c);for(let i=0;i<w.w.length;i++){const r=w.r+(w.d?i:0),c=w.c+(w.d?0:i);let cell=cells[r][c];if(!cell)cell=cells[r][c]={ans:w.w[i],val:"",wd:[-1,-1],n:0,r,c};cell.wd[w.d]=wi;w.cells.push(cell);}});
+    words.forEach(w=>{cells[w.r][w.c].n=w.n;});
+    done=false;sel=null;dir=0;
+  }
+  function draw(){
+    const cs=Math.max(24,Math.min(42,Math.floor((Math.min(innerWidth,760)-44)/W)));
+    grid.style.cssText=`--cs:${cs}px;grid-template-columns:repeat(${W},${cs}px)`;
+    const els=[];
+    for(let r=0;r<H;r++)for(let c=0;c<W;c++){const cell=cells[r][c];if(!cell){els.push(h("div",{class:"c blk"}));continue;}
+      const inp=h("input",{maxlength:"2",autocomplete:"off",autocapitalize:"characters",spellcheck:"false"});
+      const d=h("div",{class:"c"},cell.n?h("b",{},cell.n):null,inp);cell.el=d;cell.inp=inp;
+      d.addEventListener("click",()=>pick(cell,true));
+      inp.addEventListener("input",()=>typed(cell));
+      inp.addEventListener("keydown",e=>key(e,cell));
+      els.push(d);}
+    grid.replaceChildren(...els);
+    const mk=(d,title)=>{const ol=h("ol");words.filter(w=>w.d===d).sort((a,b)=>a.n-b.n).forEach(w=>{w.li=h("li",{onclick:()=>{const t=w.cells.find(c=>!c.val)||w.cells[0];dir=w.d;pick(t,false);}},w.n+". "+w.clue+" ("+w.w.length+")");ol.append(w.li);});return h("div",{},h("h4",{},title),ol);};
+    clueBox.replaceChildren(mk(0,"→ Horizontais"),mk(1,"↓ Verticais"));
+  }
+  function pick(cell,toggle){
+    const has=[cell.wd[0]>=0,cell.wd[1]>=0];
+    if(sel===cell&&toggle&&has[0]&&has[1])dir=1-dir;else if(!has[dir])dir=has[0]?0:1;
+    sel=cell;paint();cell.inp.focus();try{cell.inp.select();}catch(e){}
+  }
+  function paint(){
+    const w=words[sel.wd[dir]];
+    cells.flat().forEach(c=>{if(c)c.el.classList.remove("hl","cur");});
+    words.forEach(x=>x.li&&x.li.classList.remove("on"));
+    w.cells.forEach(c=>c.el.classList.add("hl"));sel.el.classList.add("cur");w.li.classList.add("on");
+    act.textContent=w.n+(w.d?" ↓ ":" → ")+w.clue+" ("+w.w.length+" letras)";
+  }
+  function typed(cell){
+    const v=cell.inp.value.normalize("NFD").replace(/[^A-Za-z]/g,"").toUpperCase().slice(-1);
+    cell.inp.value=v;cell.val=v;cell.el.classList.remove("bad");
+    if(v){const w=words[cell.wd[dir]]||words[cell.wd[1-dir]];const nx=w.cells[w.cells.indexOf(cell)+1];if(nx)pick(nx,false);}
+    checkWin();
+  }
+  function key(e,cell){
+    const mv={ArrowRight:[0,1,0],ArrowLeft:[0,-1,0],ArrowDown:[1,0,1],ArrowUp:[-1,0,1]}[e.key];
+    if(mv){e.preventDefault();const n=cells[cell.r+mv[0]]&&cells[cell.r+mv[0]][cell.c+mv[1]];if(n){dir=n.wd[mv[2]]>=0?mv[2]:dir;pick(n,false);}return;}
+    if(e.key==="Backspace"&&!cell.val){e.preventDefault();const w=words[cell.wd[dir]]||words[cell.wd[1-dir]];const pv=w.cells[w.cells.indexOf(cell)-1];if(pv){pv.val="";pv.inp.value="";pick(pv,false);}}
+  }
+  function checkWin(){if(done)return;if(cells.flat().every(c=>!c||c.val===c.ans)){done=true;api.later(()=>api.win("Cruzadinha completa!"),300);}}
+  function check(){let bad=0;cells.flat().forEach(c=>{if(!c)return;const b=c.val&&c.val!==c.ans;c.el.classList.toggle("bad",!!b);if(b)bad++;});msg.textContent=bad?bad+" letra(s) errada(s), em vermelho":"Nada errado até agora 👍";}
+  function reveal(){if(!sel)return;sel.val=sel.ans;sel.inp.value=sel.ans;sel.el.classList.remove("bad");checkWin();}
+  function nova(){api.seed();msg.textContent="";setup();draw();pick(words[0].cells[0],false);}
+  root.append(h("div",{class:"bar-row"},h("button",{class:"btn sm main",onclick:check},"✔ Conferir"),h("button",{class:"btn sm",onclick:reveal},"💡 Revelar letra"),h("button",{class:"btn sm",onclick:nova},"↻ Reiniciar")),act,grid,msg,clueBox);
+  nova();
+}
+
+/* ---- 14. QUEM É QUEM? (lógica de dedução) ---- */
+function logica(root,api){
+  const lv=api.level;let N,K;
+  if(lv<=8){N=3;K=2;}else if(lv<=17){N=4;K=2;}else if(lv<=26){N=3;K=3;}else if(lv<=34){N=4;K=3;}else if(lv<=42){N=5;K=3;}else{N=4;K=4;}
+  const POS=[70,45,30][api.tier],NEG=[20,30,35][api.tier];
+  const NAMES=["Ana","Bruno","Carla","Diego","Elisa","Fábio"];
+  const CATS=[
+    {pre:"está de camisa",items:["verde","amarela","vermelha","azul","preta","roxa"]},
+    {pre:"tem",items:["um cachorro","um gato","um papagaio","um coelho","um peixe","um hamster"]},
+    {pre:"gosta de",items:["banana","uva","manga","morango","laranja","maçã"]},
+    {pre:"joga",items:["futebol","vôlei","tênis","basquete","natação","xadrez"]}];
+  const PERMS=[];(function pm(a,rest){if(!rest.length){PERMS.push(a);return;}for(let i=0;i<rest.length;i++)pm([...a,rest[i]],rest.filter((_,j)=>j!==i));})([],[...Array(N).keys()]);
+  let names,cats,clues,qc,qv,ans,st,val,who;
+  const ph=(c,v)=>cats[c].pre+" "+cats[c].items[v];
+  const text=c=>{
+    const S=c.cs===0?names[c.vs]:"Quem "+ph(c.cs,c.vs);let O;
+    if(c.co===0)O=c.t==="p"?"é "+names[c.vo]:c.t==="n"?"não é "+names[c.vo]:"é "+names[c.o[0]]+" ou "+names[c.o[1]];
+    else O=c.t==="p"?ph(c.co,c.vo):c.t==="n"?"não "+ph(c.co,c.vo):cats[c.co].pre+" "+cats[c.co].items[c.o[0]]+" ou "+cats[c.co].items[c.o[1]];
+    return S+" "+O+".";
+  };
+  function rc(){
+    const cs=rnd(K);let co=rnd(K-1);if(co>=cs)co++;const vs=rnd(N),p=who[cs][vs],vt=val[co][p],r=rnd(100);
+    if(r<POS)return {t:"p",cs,vs,co,vo:vt};
+    let other=rnd(N-1);if(other>=vt)other++;
+    if(r<POS+NEG)return {t:"n",cs,vs,co,vo:other};
+    return {t:"o",cs,vs,co,o:rnd(2)?[vt,other]:[other,vt]};
+  }
+  function count(cl){
+    let n=0;const wh=Array.from({length:K},()=>Array(N).fill(-1));wh[0]=[...Array(N).keys()];
+    const by=Array.from({length:K},()=>[]);for(const c of cl)by[Math.max(c.cs,c.co)].push(c);
+    const ok=cat=>by[cat].every(c=>{const p=wh[c.cs][c.vs];if(c.t==="p")return p===wh[c.co][c.vo];if(c.t==="n")return p!==wh[c.co][c.vo];return p===wh[c.co][c.o[0]]||p===wh[c.co][c.o[1]];});
+    (function rec(cat){if(n>1)return;if(cat===K){n++;return;}for(const pm of PERMS){if(n>1)return;pm.forEach((v,p)=>wh[cat][v]=p);if(ok(cat))rec(cat+1);}})(1);
+    return n;
+  }
+  function gen(){
+    names=shuffle(NAMES.slice()).slice(0,N);
+    cats=[{items:names},...shuffle(CATS.slice()).slice(0,K-1).map(c=>({pre:c.pre,items:shuffle(c.items.slice()).slice(0,N)}))];
+    val=[[...Array(N).keys()],...cats.slice(1).map(()=>shuffle([...Array(N).keys()]))];
+    who=val.map(v=>{const w=[];v.forEach((x,p)=>w[x]=p);return w;});
+    let chosen=[];
+    for(let i=0;i<400;i++){chosen.push(rc());if(count(chosen)===1)break;}
+    for(let i=chosen.length-1;i>=0;i--){const t=chosen.slice();t.splice(i,1);if(count(t)===1)chosen=t;}
+    clues=chosen;
+    const direct=(cc,v)=>clues.some(c=>c.t==="p"&&((c.cs===0&&c.co===cc&&c.vo===v)||(c.co===0&&c.cs===cc&&c.vs===v)));
+    const opts=[];for(let cc=1;cc<K;cc++)for(let v=0;v<N;v++)opts.push([cc,v]);
+    const fresh=opts.filter(([cc,v])=>!direct(cc,v));const pickq=(fresh.length?fresh:opts)[rnd((fresh.length?fresh:opts).length)];
+    [qc,qv]=pickq;ans=who[qc][qv];
+    st=Array.from({length:K},()=>Array.from({length:N},()=>Array(N).fill(0)));
+  }
+  const holder=h("div");
+  function render(){
+    const box=h("div",{class:"lg"});
+    box.append(h("div",{class:"lgbox"},h("b",{},"🔎 Pistas"),h("ol",{},clues.map(c=>h("li",{},text(c))))));
+    const nb=h("div",{class:"lgbox"},h("b",{},"📒 Caderno de anotações"),h("div",{style:"font-size:13px;color:var(--mut)"},"Toque nas células: ✗ = não, ✓ = sim. Só pra te ajudar a pensar."));
+    for(let c=1;c<K;c++){
+      const tb=h("table",{class:"gridt"},h("tr",{},h("th",{}),cats[c].items.map(i=>h("th",{},i.replace(/^um /,"")))));
+      names.forEach((n,p)=>{const tr=h("tr",{},h("th",{},n));cats[c].items.forEach((_,v)=>{
+        const b=h("button",{});const upd=()=>{b.textContent=["","✗","✓"][st[c][p][v]];b.className=["","x","y"][st[c][p][v]];};
+        b.onclick=()=>{st[c][p][v]=(st[c][p][v]+1)%3;upd();};upd();tr.append(h("td",{},b));});tb.append(tr);});
+      nb.append(h("div",{class:"tw"},tb));
+    }
+    box.append(nb);
+    const q=h("div",{class:"lgbox"},h("div",{class:"lgq"},"❓ Quem "+ph(qc,qv)+"?"));
+    const row=h("div",{class:"ans"});
+    names.forEach((n,i)=>{const b=h("button",{class:"btn",onclick:()=>{
+      if(i===ans)api.win(n+" "+ph(qc,qv)+". Dedução perfeita!");
+      else{b.classList.add("no");b.disabled=true;msg.textContent="Hmm, não é "+n+". Releia as pistas com calma 🕵️";}}},n);row.append(b);});
+    q.append(row,msg);box.append(q);holder.replaceChildren(box);
+  }
+  const msg=h("div",{class:"msg",style:"margin-top:10px"});
+  function nova(){api.seed();msg.textContent="";gen();render();}
+  root.append(h("div",{class:"bar-row"},h("button",{class:"btn sm",onclick:nova},"↻ Reiniciar")),holder);
+  nova();
+}
+
 const GAMES=[
  {id:"sudoku",nome:"Sudoku",emoji:"🔢",cor:"#6366f1",desc:"Complete a grade 9×9 sem repetir números.",regras:"Preencha cada linha, coluna e quadrado 3×3 com os números de 1 a 9, sem repetir. Use o teclado ou os botões.",fn:sudoku},
  {id:"2048",nome:"2048",emoji:"🟧",cor:"#f59e0b",desc:"Junte números iguais até chegar ao 2048.",regras:"Use as setas (ou deslize o dedo). Peças iguais se fundem ao se encontrar. Chegue na peça da meta da fase!",fn:g2048},
@@ -517,6 +874,8 @@ const GAMES=[
  {id:"genius",nome:"Genius",emoji:"🎵",cor:"#22c55e",desc:"Repita a sequência de luzes e sons.",regras:"Observe a sequência e repita na mesma ordem. Ela cresce a cada rodada. Aguente 10 rodadas!",fn:genius},
  {id:"forca",nome:"Forca",emoji:"🔤",cor:"#f97316",desc:"Descubra a palavra antes do boneco completar.",regras:"Escolha letras (ou use o teclado). Você pode errar 6 vezes. A dica é a categoria.",fn:forca},
  {id:"senha",nome:"Senha (Mastermind)",emoji:"🔐",cor:"#a855f7",desc:"Quebre o código secreto com lógica pura.",regras:"Monte uma combinação de 4 cores. ● preto = cor e posição certas. ○ branco = cor certa, posição errada. Descubra em 10 tentativas.",fn:senha},
+ {id:"cruzadas",nome:"Palavras Cruzadas",emoji:"📝",cor:"#10b981",desc:"Cruzadinha com dicas — cada fase tem a sua.",regras:"Toque numa casa e digite. Toque de novo na mesma casa para alternar entre horizontal e vertical. Toque numa dica para ir direto à palavra. Sem acentos nem cedilha.",fn:cruzadas},
+ {id:"logica",nome:"Quem é quem?",emoji:"🕵️",cor:"#e11d48",desc:"Ana está de verde, Bruno de amarelo… quem está de vermelho?",regras:"Leia as pistas, deduza quem é quem e responda a pergunta no final. Use o caderno de anotações para eliminar as possibilidades.",fn:logica},
 ];
 
 const home=document.getElementById("home"),gameSec=document.getElementById("game"),stage=document.getElementById("stage");
