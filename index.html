@@ -173,6 +173,17 @@ footer{text-align:center;color:var(--mut);margin-top:44px;font-size:14px}
 .lvgrid button.w{background:var(--ok);color:#06240f}
 .lvgrid button.cur{outline:2px solid var(--acc)}
 .peg.tg{border:2px dashed var(--ok)}
+/* DESAFIOS DO CINZA */
+.czsec{margin-top:46px;padding:22px 16px 18px;border-radius:22px;background:linear-gradient(160deg,rgba(24,24,30,.88),rgba(80,80,92,.4));border:1px solid rgba(255,255,255,.2);box-shadow:0 0 40px rgba(0,0,0,.35)}
+.czsec h2{margin:0 0 6px;font-size:clamp(26px,5.5vw,38px);background:linear-gradient(90deg,#f3f4f6,#9ca3af,#e5e7eb);-webkit-background-clip:text;background-clip:text;color:transparent}
+.czsec p{color:var(--mut);margin:0 0 4px;line-height:1.45}.czsec small{color:#d1d5db}
+.gcard.cz{background:rgba(18,18,24,.7);border-color:rgba(255,255,255,.2);filter:grayscale(.35)}
+.gcard.cz::before{background:radial-gradient(circle at 100% 0,#9ca3af,transparent 62%);opacity:.3}
+.gcard.cz:hover{border-color:#e5e7eb;filter:none}
+.gcard .skull{position:absolute;right:12px;top:8px;font-size:18px}
+.lvgrid.cz{grid-template-columns:repeat(5,1fr)}
+#game.cinza .top h2{background:linear-gradient(90deg,#f3f4f6,#9ca3af);-webkit-background-clip:text;background-clip:text;color:transparent}
+#game.cinza .stat:first-child{border-color:#9ca3af}
 /* CRUZADAS */
 .cw{display:grid;gap:2px;padding:8px;background:#2b2560;border-radius:12px}
 .cw .c{position:relative;width:var(--cs);height:var(--cs);background:#fff8e7;border-radius:3px}
@@ -211,10 +222,17 @@ footer{text-align:center;color:var(--mut);margin-top:44px;font-size:14px}
       <h1>Esse jogo é<br>pra você, <span class="nome" id="nome" title="clica aqui 😉"></span></h1>
       <div class="cta">
         <button class="btn main" onclick="document.getElementById('lista').scrollIntoView({behavior:'smooth'})">🎮 Ir pros jogos</button>
+        <button class="btn" onclick="document.getElementById('czsec').scrollIntoView({behavior:'smooth'})">💀 Desafios do Cinza</button>
       </div>
       <div class="progress"><div class="bar"><i id="pbar" style="width:0"></i></div><small id="ptxt"></small></div>
     </div>
     <div class="grid" id="lista"></div>
+    <div class="czsec" id="czsec">
+      <h2>💀 Desafios do Cinza</h2>
+      <p>Uma seção só pros corajosos: dificuldade <b>10× acima do Difícil</b>. 20 desafios em cada jogo.</p>
+      <small id="czprog"></small>
+      <div class="grid" id="listacz"></div>
+    </div>
   </section>
   <section id="game" class="hidden">
     <div class="top"><button class="btn sm" id="back">← Menu</button><h2 id="gtitle"></h2></div>
@@ -273,7 +291,7 @@ function modal(content,cls=""){const ov=h("div",{class:"ov"});const m=h("div",{c
 
 /* ---- 1. SUDOKU ---- */
 function sudoku(root,api){
-  const hole=[36,46,54][api.tier];
+  const hole=api.tier===3?57+Math.floor((api.level-1)/5):[36,46,54][api.tier];
   let given,sol,vals,sel=-1,done=false;
   const cands=(b,i)=>{const r=Math.floor(i/9),c=i%9,u=new Set();for(let k=0;k<9;k++){u.add(b[r*9+k]);u.add(b[k*9+c]);}const br=r-r%3,bc=c-c%3;for(let a=0;a<3;a++)for(let d=0;d<3;d++)u.add(b[(br+a)*9+bc+d]);const o=[];for(let v=1;v<=9;v++)if(!u.has(v))o.push(v);return o;};
   const pick=b=>{let best=-1,bc=null,bn=10;for(let i=0;i<81;i++)if(!b[i]){const c=cands(b,i);if(c.length<bn){bn=c.length;best=i;bc=c;if(bn<=1)break;}}return [best,bc];};
@@ -304,7 +322,7 @@ function sudoku(root,api){
 
 /* ---- 2. 2048 ---- */
 function g2048(root,api){
-  const goal=[512,1024,2048][api.tier];
+  const goal=[512,1024,2048,4096][api.tier];
   let g,score=0,best=load("b2048",0),won=false,over=false;
   const board=h("div",{class:"b2048"});const sS=stat("Pontos",0),sB=stat("Recorde",best);let cover=null;
   const empty=()=>g.map((v,i)=>v?-1:i).filter(i=>i>=0);
@@ -335,10 +353,10 @@ function g2048(root,api){
 /* ---- 3. MEMÓRIA ---- */
 function memoria(root,api){
   const EM=["🦊","🐼","🦁","🐙","🦄","🐸","🍕","🚀","🎸","🌵","🍩","⚽","🎲","🔮","🌈","🍉","🐢","🦋"];
-  const level=[12,16,20][api.tier];let first=null,lock=false,moves=0,found=0;
+  const level=[12,16,20,36][api.tier];let first=null,lock=false,moves=0,found=0;
   const board=h("div",{class:"mem"});const sM=stat("Jogadas",0);
   function nova(){
-    api.seed();const cols=level===12?4:level===20?5:4;board.style.gridTemplateColumns=`repeat(${cols},1fr)`;
+    api.seed();const cols=level===36?6:level===20?5:4;board.style.gridTemplateColumns=`repeat(${cols},1fr)`;
     const set=shuffle(EM.slice()).slice(0,level/2);const deck=shuffle([...set,...set]);first=null;lock=false;moves=0;found=0;sM.set(0);
     board.replaceChildren(...deck.map(e=>{const c=h("button",{class:"card"},h("div",{class:"in"},h("div",{class:"bk"},"✦"),h("div",{class:"fr"},e)));c.dataset.e=e;c.onclick=()=>flip(c);return c;}));
   }
@@ -354,8 +372,8 @@ function memoria(root,api){
 
 /* ---- 4. TORRE DE HANOI ---- */
 function hanoi(root,api){
-  const n=3+Math.floor((api.level-1)/10);let pegs,sel=-1,moves=0,target=2,min=0;const wrap=h("div",{class:"hanoi"});const sM=stat("Jogadas",0),msg=h("div",{class:"msg"});
-  const COL=["#ff6b9d","#ffd166","#4ade80","#8be9fd","#c4b5fd","#fb923c","#f87171"];
+  const n=api.tier===3?8+Math.floor((api.level-1)/10):3+Math.floor((api.level-1)/10);let pegs,sel=-1,moves=0,target=2,min=0;const wrap=h("div",{class:"hanoi"});const sM=stat("Jogadas",0),msg=h("div",{class:"msg"});
+  const COL=["#ff6b9d","#ffd166","#4ade80","#8be9fd","#c4b5fd","#fb923c","#f87171","#38bdf8","#a3e635"];
   function bfs(s,tg){const enc=a=>a.reduce((x,p)=>x*3+p,0);const goal=enc(Array(n).fill(tg));const seen=new Set([enc(s)]);let fr=[s],d=0;
     while(fr.length){if(fr.some(a=>enc(a)===goal))return d;const nx=[];
       for(const a of fr){const top=[-1,-1,-1];for(let i=n-1;i>=0;i--)top[a[i]]=i;
@@ -364,7 +382,7 @@ function hanoi(root,api){
   function nova(){api.seed();let s,tg;do{s=Array.from({length:n},()=>rnd(3));tg=rnd(3);}while(s.every(p=>p===tg));
     target=tg;min=bfs(s,tg);pegs=[[],[],[]];for(let i=n-1;i>=0;i--)pegs[s[i]].push(i+1);sel=-1;moves=0;sM.set(0);msg.textContent="Leve tudo ao pino tracejado. Mínimo possível: "+min+" jogadas";render();}
   function render(){wrap.replaceChildren(...pegs.map((p,pi)=>{const el=h("div",{class:"peg"+(sel===pi?" sel":"")+(pi===target?" tg":""),onclick:()=>click(pi)});
-    p.forEach((d,di)=>el.append(h("div",{class:"disc"+(di===p.length-1?" top":""),style:`width:${30+d*(62/n)}%;background:${COL[d-1]}`})));return el;}));}
+    p.forEach((d,di)=>el.append(h("div",{class:"disc"+(di===p.length-1?" top":""),style:`width:${30+d*(62/n)}%;height:${n>7?19:26}px;background:${COL[d-1]}`})));return el;}));}
   function click(i){
     if(sel<0){if(pegs[i].length){sel=i;render();}return;}
     if(sel===i){sel=-1;render();return;}
@@ -378,7 +396,7 @@ function hanoi(root,api){
 
 /* ---- 5. QUEBRA-CABEÇA DESLIZANTE ---- */
 function deslizante(root,api){
-  const N=[3,4,5][api.tier];let t,moves=0;const board=h("div",{class:"slide"});const sM=stat("Jogadas",0);
+  const N=api.tier===3?(api.level<=10?6:7):[3,4,5][api.tier];let t,moves=0;const board=h("div",{class:"slide"});const sM=stat("Jogadas",0);
   const solved=()=>t.every((v,i)=>v===(i+1)%(N*N));
   function nova(){
     api.seed();t=[...Array(N*N).keys()].map(i=>(i+1)%(N*N));let b=N*N-1,prev=-1;
@@ -394,7 +412,7 @@ function deslizante(root,api){
 
 /* ---- 6. CAMPO MINADO ---- */
 function minas(root,api){
-  const LV={facil:[9,9,10],medio:[12,12,24],dificil:[14,16,40]};const lv=["facil","medio","dificil"][api.tier];
+  const LV={facil:[9,9,10],medio:[12,12,24],dificil:[14,16,40],cinza:[20,16,58+api.level]};const lv=["facil","medio","dificil","cinza"][api.tier];
   let R,C,M,mine,rev,flag,adj,btns,started,over,flagMode=false,secs,left;
   const board=h("div",{class:"ms"});const sT=stat("Tempo","0:00"),sF=stat("Minas","0");
   const nb=i=>{const r=Math.floor(i/C),c=i%C,o=[];for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++){if(!a&&!b)continue;const rr=r+a,cc=c+b;if(rr>=0&&rr<R&&cc>=0&&cc<C)o.push(rr*C+cc);}return o;};
@@ -420,48 +438,64 @@ function minas(root,api){
 
 /* ---- 7. APAGUE AS LUZES ---- */
 function luzes(root,api){
-  const hard=4+Math.floor((api.level-1)/5);let g,moves=0;const board=h("div",{class:"lo"});const sM=stat("Jogadas",0);
-  const press=i=>{const r=Math.floor(i/5),c=i%5;[[0,0],[1,0],[-1,0],[0,1],[0,-1]].forEach(([a,b])=>{const rr=r+a,cc=c+b;if(rr>=0&&rr<5&&cc>=0&&cc<5)g[rr*5+cc]=!g[rr*5+cc];});};
-  function nova(){api.seed();g=Array(25).fill(false);const ps=shuffle([...Array(25).keys()]).slice(0,hard);ps.forEach(press);if(!g.some(Boolean))return nova();moves=0;sM.set(0);render();}
+  const S=api.tier===3?7:5;const hard=api.tier===3?14+api.level:4+Math.floor((api.level-1)/5);let g,moves=0;const board=h("div",{class:"lo"});const sM=stat("Jogadas",0);
+  const press=i=>{const r=Math.floor(i/S),c=i%S;[[0,0],[1,0],[-1,0],[0,1],[0,-1]].forEach(([a,b])=>{const rr=r+a,cc=c+b;if(rr>=0&&rr<S&&cc>=0&&cc<S)g[rr*S+cc]=!g[rr*S+cc];});};
+  function nova(){api.seed();board.style.gridTemplateColumns="repeat("+S+",1fr)";g=Array(S*S).fill(false);const ps=shuffle([...Array(S*S).keys()]).slice(0,hard);ps.forEach(press);if(!g.some(Boolean))return nova();moves=0;sM.set(0);render();}
   function render(){board.replaceChildren(...g.map((on,i)=>h("button",{class:on?"on":"",onclick:()=>{press(i);moves++;sM.set(moves);render();if(!g.some(Boolean))api.later(()=>api.win("Tudo apagado em "+moves+" jogadas!",nova),300);}})));}
   root.append(h("div",{class:"bar-row"},sM,h("button",{class:"btn sm",onclick:nova},"↻ Reiniciar")),board);nova();
 }
 
 /* ---- 8. JOGO DA VELHA ---- */
 function velha(root,api){
-  const lv=["facil","medio","dificil"][api.tier];let b,over,tally=load("tttTally",{v:0,e:0,d:0});
+  const CZ=api.tier===3,lv=["facil","medio","dificil","dificil"][api.tier];
+  const ME=CZ?"O":"X",AI=CZ?"X":"O";
+  let b,over,tally=load("tttTally",{v:0,e:0,d:0});
   const L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
   const win=bd=>{for(const l of L)if(bd[l[0]]&&bd[l[0]]===bd[l[1]]&&bd[l[0]]===bd[l[2]])return l;return null;};
   const free=bd=>bd.map((v,i)=>v?-1:i).filter(i=>i>=0);
-  const mm=(bd,p)=>{const w=win(bd);if(w)return bd[w[0]]==="O"?10:-10;const f=free(bd);if(!f.length)return 0;let best=p==="O"?-99:99;for(const i of f){bd[i]=p;const v=mm(bd,p==="O"?"X":"O");bd[i]="";if(p==="O")best=Math.max(best,v-0.01);else best=Math.min(best,v+0.01);}return best;};
+  const mm=(bd,p)=>{const w=win(bd);if(w)return bd[w[0]]===AI?10:-10;const f=free(bd);if(!f.length)return 0;let best=p===AI?-99:99;for(const i of f){bd[i]=p;const v=mm(bd,p===AI?ME:AI);bd[i]="";if(p===AI)best=Math.max(best,v-0.01);else best=Math.min(best,v+0.01);}return best;};
   function ai(){const f=free(b);
     const tryWin=p=>{for(const i of f){b[i]=p;const w=win(b);b[i]="";if(w)return i;}return -1;};
     if(lv==="facil")return f[rnd(f.length)];
-    if(lv==="medio"){let m=tryWin("O");if(m<0)m=tryWin("X");return m>=0?m:f[rnd(f.length)];}
-    let bi=-1,bv=-99;for(const i of shuffle(f.slice())){b[i]="O";const v=mm(b,"X");b[i]="";if(v>bv){bv=v;bi=i;}}return bi;}
+    if(lv==="medio"){let m=tryWin(AI);if(m<0)m=tryWin(ME);return m>=0?m:f[rnd(f.length)];}
+    let bi=-1,bv=-99;for(const i of shuffle(f.slice())){b[i]=AI;const v=mm(b,ME);b[i]="";if(v>bv){bv=v;bi=i;}}return bi;}
   const board=h("div",{class:"ttt"});const sc=stat("Placar","");
   const upd=()=>sc.set(`Você ${tally.v} · Empates ${tally.e} · IA ${tally.d}`);
-  function nova(){api.seed();over=false;const pairs=(api.level-1)%4;let tries=0;do{b=Array(9).fill("");const f=shuffle([0,1,2,3,4,5,6,7,8]);for(let k=0;k<pairs*2;k++)b[f[k]]=k%2?"O":"X";}while(win(b)&&++tries<50);if(win(b))b=Array(9).fill("");render();}
+  function nova(){
+    api.seed();over=false;
+    if(CZ){
+      // a IA (X) já jogou; a posição é armada de forma que só o empate perfeito salva
+      const pairs=(api.level-1)%3;let tries=0;
+      while(true){b=Array(9).fill("");const f=shuffle([0,1,2,3,4,5,6,7,8]);for(let k=0;k<pairs*2+1;k++)b[f[k]]=k%2?ME:AI;
+        if(!win(b)){const v=mm(b,ME);if(v>-5&&v<5)break;}
+        if(++tries>300){b=Array(9).fill("");b[4]=AI;break;}}
+    }else{
+      const pairs=(api.level-1)%4;let tries=0;
+      do{b=Array(9).fill("");const f=shuffle([0,1,2,3,4,5,6,7,8]);for(let k=0;k<pairs*2;k++)b[f[k]]=k%2?"O":"X";}while(win(b)&&++tries<50);
+      if(win(b))b=Array(9).fill("");
+    }
+    render();
+  }
   function render(w){board.replaceChildren(...b.map((v,i)=>h("button",{class:(v==="X"?"x ":v?"o ":"")+(w&&w.includes(i)?"w":""),onclick:()=>play(i)},v)));}
   function end(w){over=true;render(w);const who=w?b[w[0]]:"";
-    if(who==="X"){tally.v++;save("tttTally",tally);upd();api.win("Você venceu a IA"+(lv==="medio"?"!":" no modo "+lv+"!"),nova);}
-    else if(who==="O"){tally.d++;save("tttTally",tally);upd();api.later(()=>modal([h("div",{class:"big"},"🤖"),h("h3",{},"A IA venceu essa"),h("button",{class:"btn main",onclick:e=>{e.target.closest(".ov").remove();nova();}},"Revanche")]),400);}
-    else{tally.e++;save("tttTally",tally);upd();if(lv==="dificil")api.win("Empate contra a IA perfeita já é uma vitória!",nova);else api.later(()=>modal([h("div",{class:"big"},"🤝"),h("h3",{},"Empate!"),h("button",{class:"btn main",onclick:e=>{e.target.closest(".ov").remove();nova();}},"Jogar de novo")]),300);}}
-  function play(i){if(over||b[i])return;b[i]="X";let w=win(b);if(w||!free(b).length)return end(w);b[ai()]="O";w=win(b);if(w||!free(b).length)return end(w);render();}
+    if(who===ME){tally.v++;save("tttTally",tally);upd();api.win(CZ?"Você venceu a IA perfeita!":"Você venceu a IA"+(lv==="medio"?"!":" no modo "+lv+"!"));}
+    else if(who===AI){tally.d++;save("tttTally",tally);upd();api.later(()=>modal([h("div",{class:"big"},"🤖"),h("h3",{},"A IA venceu essa"),h("button",{class:"btn main",onclick:e=>{e.target.closest(".ov").remove();nova();}},"Revanche")]),400);}
+    else{tally.e++;save("tttTally",tally);upd();if(lv==="dificil")api.win(CZ?"Empate segurado contra a IA perfeita!":"Empate contra a IA perfeita já é uma vitória!");else api.later(()=>modal([h("div",{class:"big"},"🤝"),h("h3",{},"Empate!"),h("button",{class:"btn main",onclick:e=>{e.target.closest(".ov").remove();nova();}},"Jogar de novo")]),300);}}
+  function play(i){if(over||b[i])return;b[i]=ME;let w=win(b);if(w||!free(b).length)return end(w);b[ai()]=AI;w=win(b);if(w||!free(b).length)return end(w);render();}
   root.append(h("div",{class:"bar-row"},sc,h("button",{class:"btn sm",onclick:nova},"↻ Reiniciar")),board);upd();nova();
 }
 
 /* ---- 9. QUATRO EM LINHA ---- */
 function quatro(root,api){
   const W=[];for(let r=0;r<6;r++)for(let c=0;c<7;c++)for(const [dr,dc] of [[0,1],[1,0],[1,1],[1,-1]]){const rr=r+dr*3,cc=c+dc*3;if(rr<6&&cc>=0&&cc<7)W.push([0,1,2,3].map(k=>(r+dr*k)*7+c+dc*k));}
-  const lv=[2,4,6][api.tier];let b,over,busy;const board=h("div",{class:"c4"});const msg=h("div",{class:"msg"});
+  const lv=[2,4,6,7][api.tier];let b,over,busy;const board=h("div",{class:"c4"});const msg=h("div",{class:"msg"});
   const winner=bd=>{for(const w of W){const v=bd[w[0]];if(v&&v===bd[w[1]]&&v===bd[w[2]]&&v===bd[w[3]])return w;}return null;};
   const dropRow=(bd,c)=>{for(let r=5;r>=0;r--)if(!bd[r*7+c])return r;return -1;};
   const ORDER=[3,2,4,1,5,0,6];
   const evalb=(bd,p)=>{let s=0;for(let r=0;r<6;r++){if(bd[r*7+3]===p)s+=3;else if(bd[r*7+3]===3-p)s-=3;}for(const w of W){let m=0,t=0;for(const i of w){if(bd[i]===p)m++;else if(bd[i])t++;}if(!t){if(m===3)s+=6;else if(m===2)s+=2;}else if(!m){if(t===3)s-=7;else if(t===2)s-=2;}}return s;};
   const nega=(bd,d,a,be,p)=>{if(winner(bd))return -(1000+d);if(bd.every(Boolean))return 0;if(!d)return evalb(bd,p);let best=-1e9;for(const c of ORDER){const r=dropRow(bd,c);if(r<0)continue;bd[r*7+c]=p;const v=-nega(bd,d-1,-be,-a,3-p);bd[r*7+c]=0;if(v>best)best=v;if(best>a)a=best;if(a>=be)break;}return best;};
   function aiMove(){let bc=-1,bv=-1e9;for(const c of shuffle(ORDER.slice())){const r=dropRow(b,c);if(r<0)continue;b[r*7+c]=2;let v=winner(b)?5000:-nega(b,lv-1,-1e9,1e9,1);b[r*7+c]=0;if(v>bv){bv=v;bc=c;}}return bc;}
-  function nova(){api.seed();over=false;busy=false;const pairs=(api.level-1)%4;let tries=0;do{b=Array(42).fill(0);for(let k=0;k<pairs*2;k++){const cs=[];for(let c=0;c<7;c++)if(dropRow(b,c)>=0)cs.push(c);const c=cs[rnd(cs.length)];b[dropRow(b,c)*7+c]=k%2?2:1;}}while(winner(b)&&++tries<50);if(winner(b))b=Array(42).fill(0);msg.textContent="Sua vez (vermelho)";render();}
+  function nova(){api.seed();over=false;busy=false;const pairs=(api.level-1)%4;let tries=0;do{b=Array(42).fill(0);for(let k=0;k<pairs*2;k++){const cs=[];for(let c=0;c<7;c++)if(dropRow(b,c)>=0)cs.push(c);const c=cs[rnd(cs.length)];b[dropRow(b,c)*7+c]=k%2?2:1;}}while(winner(b)&&++tries<50);if(winner(b))b=Array(42).fill(0);msg.textContent="Sua vez (vermelho)";render();if(api.tier===3){busy=true;msg.textContent="A IA começa…";api.later(()=>{const m=aiMove();b[dropRow(b,m)*7+m]=2;busy=false;render();msg.textContent="Sua vez (vermelho)";},500);}}
   function render(w){board.replaceChildren(...b.map((v,i)=>h("button",{class:(v?"p"+v:"")+(w&&w.includes(i)?" w":""),onclick:()=>drop(i%7)})));}
   function finish(){const w=winner(b);if(w){over=true;render(w);if(b[w[0]]===1)api.win("Você ligou 4! Vitória!",nova);else{msg.textContent="A IA ligou 4. Revanche?";}return true;}if(b.every(Boolean)){over=true;msg.textContent="Empate!";return true;}return false;}
   function drop(c){if(over||busy)return;const r=dropRow(b,c);if(r<0)return;b[r*7+c]=1;render();if(finish())return;busy=true;msg.textContent="IA pensando…";api.later(()=>{const m=aiMove();const rr=dropRow(b,m);b[rr*7+m]=2;busy=false;render();if(!finish())msg.textContent="Sua vez (vermelho)";},350);}
@@ -470,14 +504,14 @@ function quatro(root,api){
 
 /* ---- 10. GENIUS ---- */
 function genius(root,api){
-  const GOAL=5+Math.floor((api.level-1)/6);let seq=[],step=0,accept=false,round=0,best=load("genBest",0);const pads=[];let ac;
+  const CZ=api.tier===3;const GOAL=CZ?14+Math.floor((api.level-1)/5):5+Math.floor((api.level-1)/6);let seq=[],step=0,accept=false,round=0,best=load("genBest",0);const pads=[];let ac;
   const sR=stat("Rodada",0),sB=stat("Recorde",best),msg=h("div",{class:"msg"},"Aperte Começar");
   const tone=(i,ms=300)=>{try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=[329,415,523,659][i];o.type="sine";g.gain.setValueAtTime(.2,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+ms/1000);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+ms/1000);}catch(e){}};
   const flash=(i,ms=380)=>{pads[i].classList.add("lit");tone(i,ms);api.later(()=>pads[i].classList.remove("lit"),ms-60);};
   const board=h("div",{class:"gen"});
   for(let i=0;i<4;i++){const p=h("button",{onclick:()=>tap(i)});pads.push(p);board.append(p);}
   function start(){api.seed();seq=Array.from({length:GOAL},()=>rnd(4));round=0;next();}
-  function next(){round++;sR.set(round+"/"+GOAL);accept=false;step=0;msg.textContent="Observe…";let t=600;seq.slice(0,round).forEach(s=>{api.later(()=>flash(s),t);t+=Math.max(300,620-round*25);});api.later(()=>{accept=true;msg.textContent="Sua vez!";},t);}
+  function next(){round++;sR.set(round+"/"+GOAL);accept=false;step=0;msg.textContent="Observe…";let t=600;seq.slice(0,round).forEach(s=>{api.later(()=>flash(s,CZ?200:380),t);t+=CZ?Math.max(180,420-round*20):Math.max(300,620-round*25);});api.later(()=>{accept=true;msg.textContent="Sua vez!";},t);}
   function tap(i){if(!accept)return;flash(i,220);if(seq[step]!==i){accept=false;msg.textContent="Errou! Você chegou na rodada "+round;const sc=round-1;if(sc>best){best=sc;save("genBest",best);sB.set(best);}return;}
     step++;if(step===round){accept=false;if(round>=GOAL){api.win("Memória de elefante! "+GOAL+" rodadas perfeitas!");return;}api.later(next,700);}}
   root.append(h("div",{class:"bar-row"},sR,sB,h("button",{class:"btn sm main",onclick:start},"▶ Começar")),board,msg);
@@ -485,6 +519,7 @@ function genius(root,api){
 
 /* ---- 11. FORCA ---- */
 function forca(root,api){
+  const CZ=api.tier===3,MAXW=CZ?4:6;const HARD=["PARALELEPIPEDO","ESTERNOCLEIDOMASTOIDEO","OTORRINOLARINGOLOGISTA","ANTICONSTITUCIONAL","ELETROENCEFALOGRAMA","DESOXIRRIBONUCLEICO","INTERDISCIPLINARIDADE","ELETROCARDIOGRAMA","PSICOPEDAGOGIA","EXTRAORDINARIAMENTE","INCONSTITUCIONALIDADE","TERMODINAMICA","FOTOSSINTETIZANTE","ELETROMAGNETISMO","BIODIVERSIDADE","QUIMIOTERAPICO","PNEUMOLOGISTA","ARQUEOLOGICO","XENOFOBICO","QUINQUAGESIMO"];
   const W={"Animais":["ELEFANTE","GIRAFA","TARTARUGA","GOLFINHO","PAPAGAIO","CAMALEAO","BORBOLETA","ORNITORRINCO","TAMANDUA","CAPIVARA"],
     "Comidas":["BRIGADEIRO","FEIJOADA","PAMONHA","COXINHA","MACARRAO","CHOCOLATE","PASTEL","ABACAXI","MANDIOCA","TAPIOCA"],
     "Lugares":["PRAIA","MONTANHA","AEROPORTO","BIBLIOTECA","CACHOEIRA","FLORESTA","ESTADIO","CASTELO","DESERTO","ILHA"],
@@ -494,41 +529,39 @@ function forca(root,api){
   const svg=h("div",{class:"hang"});svg.innerHTML=`<svg viewBox="0 0 200 220"><path d="M20 210H110M60 210V15H140V40" stroke="#b9b3dd"/><circle id="p0" cx="140" cy="62" r="22"/><path id="p1" d="M140 84V140"/><path id="p2" d="M140 140L118 180"/><path id="p3" d="M140 140L162 180"/><path id="p4" d="M140 100L116 125"/><path id="p5" d="M140 100L164 125"/></svg>`;
   const wd=h("div",{class:"word"}),info=h("div",{class:"msg"}),kb=h("div",{class:"kb"});const keys={};
   for(const L of "ABCDEFGHIJKLMNOPQRSTUVWXYZ"){const k=h("button",{onclick:()=>guess(L)},L);keys[L]=k;kb.append(k);}
-  function nova(){cat=Object.keys(W)[Math.floor((api.level-1)/10)];word=W[cat][(api.level-1)%10];got=new Set();wrong=0;over=false;Object.values(keys).forEach(k=>{k.disabled=false;k.className="";});info.textContent="Dica: "+cat;render();}
-  function render(){wd.textContent=[...word].map(c=>got.has(c)?c:"_").join(" ");for(let i=0;i<6;i++)svg.querySelector("#p"+i).style.display=i<wrong?"":"none";}
+  function nova(){if(CZ){cat="Desafio do Cinza";word=HARD[(api.level-1)%HARD.length];}else{cat=Object.keys(W)[Math.floor((api.level-1)/10)];word=W[cat][(api.level-1)%10];}got=new Set();wrong=0;over=false;Object.values(keys).forEach(k=>{k.disabled=false;k.className="";});info.textContent="Dica: "+cat;render();}
+  function render(){wd.textContent=[...word].map(c=>got.has(c)?c:"_").join(" ");for(let i=0;i<6;i++)svg.querySelector("#p"+i).style.display=i<Math.ceil(wrong*6/MAXW)?"":"none";}
   function guess(L){if(over||keys[L].disabled)return;keys[L].disabled=true;if(word.includes(L)){got.add(L);keys[L].classList.add("ok");}else{wrong++;keys[L].classList.add("no");}render();
     if([...word].every(c=>got.has(c))){over=true;api.win("Você descobriu: "+word+"!",nova);}
-    else if(wrong>=6){over=true;wd.textContent=[...word].join(" ");info.textContent="Era "+word+" 😅 Clique em Nova palavra";}}
+    else if(wrong>=MAXW){over=true;wd.textContent=[...word].join(" ");info.textContent="Era "+word+" 😅 Clique em Nova palavra";}}
   api.on(document,"keydown",e=>{const L=e.key.toUpperCase();if(/^[A-Z]$/.test(L)&&!e.ctrlKey&&!e.metaKey)guess(L);});
   root.append(h("div",{class:"bar-row"},h("button",{class:"btn sm",onclick:nova},"↻ Reiniciar")),svg,wd,info,kb);nova();
 }
 
 /* ---- 12. SENHA (MASTERMIND) ---- */
 function senha(root,api){
-  const COL=["#ef4444","#3b82f6","#22c55e","#facc15","#a855f7","#fb923c"],TRIES=10;
-  let code,rows,cur,over;const board=h("div",{class:"mm"});const msg=h("div",{class:"msg"},"Descubra o código de 4 cores. ● preto = cor e lugar certos, ○ branco = cor certa no lugar errado.");
-  function nova(){api.seed();code=Array.from({length:4},()=>rnd(6));rows=[];cur=[];over=false;render();}
-  function fb(g){let b=0,w=0;const c2=[],g2=[];for(let i=0;i<4;i++){if(g[i]===code[i])b++;else{c2.push(code[i]);g2.push(g[i]);}}for(const x of g2){const k=c2.indexOf(x);if(k>=0){w++;c2.splice(k,1);}}return [b,w];}
+  const CZ=api.tier===3,LEN=CZ?5:4,NC=CZ?8:6,TRIES=CZ?9:10;
+  const COL=["#ef4444","#3b82f6","#22c55e","#facc15","#a855f7","#fb923c","#14b8a6","#ec4899"].slice(0,NC);
+  let code,rows,cur,over;const board=h("div",{class:"mm"});const msg=h("div",{class:"msg"},"Descubra o código de "+LEN+" cores. ● preto = cor e lugar certos, ○ branco = cor certa no lugar errado.");
+  function nova(){api.seed();code=Array.from({length:LEN},()=>rnd(NC));rows=[];cur=[];over=false;render();}
+  function fb(g){let b=0,w=0;const c2=[],g2=[];for(let i=0;i<LEN;i++){if(g[i]===code[i])b++;else{c2.push(code[i]);g2.push(g[i]);}}for(const x of g2){const k=c2.indexOf(x);if(k>=0){w++;c2.splice(k,1);}}return [b,w];}
   function render(){
-    const out=[];
+    const out=[],fw=LEN>4?"width:50px;grid-template-columns:repeat(3,1fr)":"";
     for(let r=0;r<TRIES;r++){const past=rows[r],isCur=r===rows.length&&!over;
-      const slots=h("div",{class:"slots"});for(let i=0;i<4;i++){const v=past?past[0][i]:isCur?cur[i]:undefined;slots.append(h("button",{class:"dot",style:v!=null?`background:${COL[v]};border-color:#fff8`:"",onclick:isCur?()=>{cur.splice(i,1);render();}:null}));}
-      const f=h("div",{class:"fb"});for(let i=0;i<4;i++){let c="";if(past){c=i<past[1][0]?"b":i<past[1][0]+past[1][1]?"w":"";}f.append(h("i",{class:c}));}
+      const slots=h("div",{class:"slots"});for(let i=0;i<LEN;i++){const v=past?past[0][i]:isCur?cur[i]:undefined;slots.append(h("button",{class:"dot",style:v!=null?`background:${COL[v]};border-color:#fff8`:"",onclick:isCur?()=>{cur.splice(i,1);render();}:null}));}
+      const f=h("div",{class:"fb",style:fw});for(let i=0;i<LEN;i++){let c="";if(past){c=i<past[1][0]?"b":i<past[1][0]+past[1][1]?"w":"";}f.append(h("i",{class:c}));}
       out.push(h("div",{class:"row"+(isCur?" cur":"")},slots,f));}
-    const sec=h("div",{class:"row sec"},h("div",{class:"slots"},[0,1,2,3].map(i=>h("button",{class:"dot",style:over?`background:${COL[code[i]]};border-color:#fff8`:""},over?"":"?"))),h("div",{style:"width:34px"}));
+    const sec=h("div",{class:"row sec"},h("div",{class:"slots"},Array.from({length:LEN},(_,i)=>h("button",{class:"dot",style:over?`background:${COL[code[i]]};border-color:#fff8`:""},over?"":"?"))),h("div",{style:LEN>4?"width:50px":"width:34px"}));
     board.replaceChildren(sec,...out);
   }
-  function add(c){if(over||cur.length>=4)return;cur.push(c);render();}
-  function submit(){if(over||cur.length<4){msg.textContent="Preencha as 4 posições primeiro.";return;}const f=fb(cur);rows.push([cur.slice(),f]);cur=[];
-    if(f[0]===4){over=true;render();api.win("Código decifrado em "+rows.length+" tentativa(s)!",nova);return;}
+  function add(c){if(over||cur.length>=LEN)return;cur.push(c);render();}
+  function submit(){if(over||cur.length<LEN){msg.textContent="Preencha as "+LEN+" posições primeiro.";return;}const f=fb(cur);rows.push([cur.slice(),f]);cur=[];
+    if(f[0]===LEN){over=true;render();api.win("Código decifrado em "+rows.length+" tentativa(s)!");return;}
     if(rows.length>=TRIES){over=true;msg.textContent="Acabaram as tentativas! O código está no topo.";}else msg.textContent="Tentativa "+(rows.length+1)+" de "+TRIES;render();}
   const pal=h("div",{class:"palette"},COL.map((c,i)=>h("button",{class:"dot",style:`background:${c}`,onclick:()=>add(i)})));
   root.append(h("div",{class:"bar-row"},h("button",{class:"btn sm",onclick:nova},"↻ Reiniciar")),board,pal,h("div",{class:"bar-row"},h("button",{class:"btn sm",onclick:()=>{cur.pop();render();}},"⌫ Apagar"),h("button",{class:"btn main sm",onclick:submit},"✔ Conferir")),msg);nova();
 }
 
-/* ============================================================
-   REGISTRO + NAVEGAÇÃO
-   ============================================================ */
 /* ---- 13. PALAVRAS CRUZADAS ---- */
 function cruzadas(root,api){
   const BANK=`CACHORRO|Melhor amigo do homem
@@ -706,7 +739,7 @@ RECIFE|Capital de Pernambuco
 FORTALEZA|Capital do Ceará
 MANAUS|Capital do Amazonas
 BELEM|Capital do Pará`.split("\n").map(l=>l.trim().split("|"));
-  const SZ=15,target=6+Math.floor((api.level-1)/7),maxLen=[7,9,12][api.tier];
+  const CZ=api.tier===3;const SZ=CZ?17:15,target=CZ?14+Math.floor((api.level-1)/3):6+Math.floor((api.level-1)/7),maxLen=[7,9,12,12][api.tier];
   let W,H,cells,words,sel=null,dir=0,done=false;
   const grid=h("div",{class:"cw"}),act=h("div",{class:"actclue"},"Toque em uma casa para começar"),clueBox=h("div",{class:"clues"}),msg=h("div",{class:"msg"});
   function can(g,m,w,r,c,d){const dr=d?1:0,dc=d?0:1,L=w.length;
@@ -752,7 +785,7 @@ BELEM|Capital do Pará`.split("\n").map(l=>l.trim().split("|"));
       inp.addEventListener("keydown",e=>key(e,cell));
       els.push(d);}
     grid.replaceChildren(...els);
-    const mk=(d,title)=>{const ol=h("ol");words.filter(w=>w.d===d).sort((a,b)=>a.n-b.n).forEach(w=>{w.li=h("li",{onclick:()=>{const t=w.cells.find(c=>!c.val)||w.cells[0];dir=w.d;pick(t,false);}},w.n+". "+w.clue+" ("+w.w.length+")");ol.append(w.li);});return h("div",{},h("h4",{},title),ol);};
+    const mk=(d,title)=>{const ol=h("ol");words.filter(w=>w.d===d).sort((a,b)=>a.n-b.n).forEach(w=>{w.li=h("li",{onclick:()=>{const t=w.cells.find(c=>!c.val)||w.cells[0];dir=w.d;pick(t,false);}},w.n+". "+w.clue+(CZ?"":" ("+w.w.length+")"));ol.append(w.li);});return h("div",{},h("h4",{},title),ol);};
     clueBox.replaceChildren(mk(0,"→ Horizontais"),mk(1,"↓ Verticais"));
   }
   function pick(cell,toggle){
@@ -765,7 +798,7 @@ BELEM|Capital do Pará`.split("\n").map(l=>l.trim().split("|"));
     cells.flat().forEach(c=>{if(c)c.el.classList.remove("hl","cur");});
     words.forEach(x=>x.li&&x.li.classList.remove("on"));
     w.cells.forEach(c=>c.el.classList.add("hl"));sel.el.classList.add("cur");w.li.classList.add("on");
-    act.textContent=w.n+(w.d?" ↓ ":" → ")+w.clue+" ("+w.w.length+" letras)";
+    act.textContent=w.n+(w.d?" ↓ ":" → ")+w.clue+(CZ?"":" ("+w.w.length+" letras)");
   }
   function typed(cell){
     const v=cell.inp.value.normalize("NFD").replace(/[^A-Za-z]/g,"").toUpperCase().slice(-1);
@@ -789,8 +822,8 @@ BELEM|Capital do Pará`.split("\n").map(l=>l.trim().split("|"));
 /* ---- 14. QUEM É QUEM? (lógica de dedução) ---- */
 function logica(root,api){
   const lv=api.level;let N,K;
-  if(lv<=8){N=3;K=2;}else if(lv<=17){N=4;K=2;}else if(lv<=26){N=3;K=3;}else if(lv<=34){N=4;K=3;}else if(lv<=42){N=5;K=3;}else{N=4;K=4;}
-  const POS=[70,45,30][api.tier],NEG=[20,30,35][api.tier];
+  if(api.tier===3){N=5;K=4;}else if(lv<=8){N=3;K=2;}else if(lv<=17){N=4;K=2;}else if(lv<=26){N=3;K=3;}else if(lv<=34){N=4;K=3;}else if(lv<=42){N=5;K=3;}else{N=4;K=4;}
+  const POS=[70,45,30,12][api.tier],NEG=[20,30,35,38][api.tier];
   const NAMES=["Ana","Bruno","Carla","Diego","Elisa","Fábio"];
   const CATS=[
     {pre:"está de camisa",items:["verde","amarela","vermelha","azul","preta","roxa"]},
@@ -879,52 +912,76 @@ const GAMES=[
 ];
 
 const home=document.getElementById("home"),gameSec=document.getElementById("game"),stage=document.getElementById("stage");
-const LEVELS=50,TIERS=["Fácil","Médio","Difícil"];
+const LEVELS=50,CLEVELS=20,TIERS=["Fácil","Médio","Difícil"];
 const tierOf=l=>l<=17?0:l<=34?1:2;
-const wonLv=id=>load("lv_"+id,[]);
+const wonKey=(id,cz)=>(cz?"lc_":"lv_")+id;
+const wonLv=(id,cz)=>load(wonKey(id,cz),[]);
 let undo=[];
 function cleanup(){undo.forEach(f=>{try{f();}catch(e){}});undo=[];RNG=Math.random;}
-function pickLevel(g,avoid){const w=new Set(wonLv(g.id));let pool=Array.from({length:LEVELS},(_,i)=>i+1).filter(l=>l!==avoid);const fresh=pool.filter(l=>!w.has(l));if(fresh.length)pool=fresh;return pool[Math.floor(Math.random()*pool.length)];}
+const CZINFO={
+  sudoku:"só 22 a 25 dicas na grade, solução única, nenhum chute.",
+  "2048":"a meta é a peça 4096.",
+  memoria:"36 cartas (6×6), 18 pares.",
+  hanoi:"8 e 9 discos já embaralhados.",
+  deslizante:"tabuleiros 6×6 e 7×7.",
+  minas:"campo 16×20 cheio de minas.",
+  luzes:"tabuleiro 7×7.",
+  velha:"você joga de O, a IA começa (perfeita) e a posição já vem armada. Só um empate cirúrgico te salva.",
+  quatro:"IA no nível máximo, e ela começa jogando.",
+  genius:"sequências de 14 ou mais, bem mais rápidas.",
+  forca:"palavras gigantes e só 4 erros permitidos.",
+  senha:"código de 5 posições, 8 cores e 9 tentativas.",
+  cruzadas:"grade maior, 14+ palavras e sem o número de letras.",
+  logica:"5 pessoas, 4 categorias e pistas bem mais traiçoeiras."
+};
+function pickLevel(g,cz,avoid){const N=cz?CLEVELS:LEVELS;const w=new Set(wonLv(g.id,cz));let pool=Array.from({length:N},(_,i)=>i+1).filter(l=>l!==avoid);const fresh=pool.filter(l=>!w.has(l));if(fresh.length)pool=fresh;return pool[Math.floor(Math.random()*pool.length)];}
 
 function renderHome(){
   document.getElementById("nome").textContent=CONFIG.nome;
-  const total=GAMES.reduce((s,g)=>s+wonLv(g.id).length,0),all=GAMES.length*LEVELS;
+  const total=GAMES.reduce((s,g)=>s+wonLv(g.id,false).length,0),all=GAMES.length*LEVELS;
   document.getElementById("pbar").style.width=(total/all*100)+"%";
   document.getElementById("ptxt").textContent=total?`Você já venceu ${total} de ${all} fases`:`${all} fases esperando por você`;
-  document.getElementById("lista").replaceChildren(...GAMES.map(g=>{const n=wonLv(g.id).length;return h("button",{class:"gcard",style:"--c:"+g.cor,onclick:()=>{location.hash=g.id;}},
+  document.getElementById("lista").replaceChildren(...GAMES.map(g=>{const n=wonLv(g.id,false).length;return h("button",{class:"gcard",style:"--c:"+g.cor,onclick:()=>{location.hash=g.id;}},
     n?h("span",{class:"done"},n+"/"+LEVELS):null,h("div",{class:"em"},g.emoji),h("b",{},g.nome),h("span",{},g.desc));}));
+  const ct=GAMES.reduce((s,g)=>s+wonLv(g.id,true).length,0),call=GAMES.length*CLEVELS;
+  document.getElementById("czprog").textContent=ct?`Desafios vencidos: ${ct} de ${call}`:`${call} desafios. Boa sorte.`;
+  document.getElementById("listacz").replaceChildren(...GAMES.map(g=>{const n=wonLv(g.id,true).length;return h("button",{class:"gcard cz",onclick:()=>{location.hash="cinza-"+g.id;}},
+    n?h("span",{class:"done"},n+"/"+CLEVELS):h("span",{class:"skull"},"💀"),h("div",{class:"em"},g.emoji),h("b",{},g.nome),h("span",{},CZINFO[g.id].charAt(0).toUpperCase()+CZINFO[g.id].slice(1)));}));
 }
 function route(id=location.hash.slice(1)){
   cleanup();document.querySelectorAll(".ov").forEach(o=>o.remove());
-  const g=GAMES.find(x=>x.id===id);
+  const cz=id.startsWith("cinza-"),g=GAMES.find(x=>x.id===(cz?id.slice(6):id));
   if(!g){gameSec.classList.add("hidden");home.classList.remove("hidden");renderHome();return;}
   home.classList.add("hidden");gameSec.classList.remove("hidden");window.scrollTo(0,0);
-  document.getElementById("gtitle").textContent=g.emoji+" "+g.nome;document.getElementById("grules").textContent=g.regras;
-  startLevel(g,pickLevel(g));
+  startLevel(g,pickLevel(g,cz),cz);
 }
-function picker(g,level){
-  const won=new Set(wonLv(g.id));
-  const ov=modal([h("h3",{},"Escolha a fase"),h("p",{},"Verde = já vencida"),h("div",{class:"lvgrid"},Array.from({length:LEVELS},(_,i)=>i+1).map(l=>h("button",{class:(won.has(l)?"w ":"")+(l===level?"cur":""),onclick:()=>{ov.remove();startLevel(g,l);}},l)))]);
+function picker(g,level,cz){
+  const N=cz?CLEVELS:LEVELS,won=new Set(wonLv(g.id,cz));
+  const ov=modal([h("h3",{},cz?"Escolha o desafio":"Escolha a fase"),h("p",{},"Verde = já vencida"),h("div",{class:"lvgrid"+(cz?" cz":"")},Array.from({length:N},(_,i)=>i+1).map(l=>h("button",{class:(won.has(l)?"w ":"")+(l===level?"cur":""),onclick:()=>{ov.remove();startLevel(g,l,cz);}},l)))]);
 }
-function startLevel(g,level){
+function startLevel(g,level,cz=false){
   cleanup();document.querySelectorAll(".ov").forEach(o=>o.remove());stage.replaceChildren();
-  const tier=tierOf(level),won=new Set(wonLv(g.id));
+  const N=cz?CLEVELS:LEVELS,tier=cz?3:tierOf(level),won=new Set(wonLv(g.id,cz));
+  document.getElementById("gtitle").textContent=(cz?"💀 ":"")+g.emoji+" "+g.nome;
+  document.getElementById("grules").textContent=g.regras+(cz?" 💀 Desafios do Cinza: "+CZINFO[g.id]:"");
+  gameSec.classList.toggle("cinza",cz);
   document.getElementById("lvbar").replaceChildren(
-    h("button",{class:"btn sm",onclick:()=>startLevel(g,(level+LEVELS-2)%LEVELS+1)},"◀"),
-    h("span",{class:"stat"},`Fase ${level}/${LEVELS} · ${TIERS[tier]}`+(won.has(level)?" ✓":"")),
-    h("button",{class:"btn sm",onclick:()=>startLevel(g,level%LEVELS+1)},"▶"),
-    h("button",{class:"btn sm",onclick:()=>startLevel(g,pickLevel(g,level))},"🎲 Aleatória"),
-    h("button",{class:"btn sm",onclick:()=>picker(g,level)},"📋 Fases"));
+    h("button",{class:"btn sm",onclick:()=>startLevel(g,(level+N-2)%N+1,cz)},"◀"),
+    h("span",{class:"stat"},`${cz?"Desafio":"Fase"} ${level}/${N} · ${cz?"💀 Cinza":TIERS[tier]}`+(won.has(level)?" ✓":"")),
+    h("button",{class:"btn sm",onclick:()=>startLevel(g,level%N+1,cz)},"▶"),
+    h("button",{class:"btn sm",onclick:()=>startLevel(g,pickLevel(g,cz,level),cz)},"🎲 Aleatória"),
+    h("button",{class:"btn sm",onclick:()=>picker(g,level,cz)},"📋 "+(cz?"Desafios":"Fases")),
+    cz?h("button",{class:"btn sm",onclick:()=>startLevel(g,pickLevel(g,false),false)},"↩ Fases normais"):h("button",{class:"btn sm",onclick:()=>startLevel(g,pickLevel(g,true),true)},"💀 Desafios do Cinza"));
   const hs=[...g.id].reduce((a,c)=>(a*31+c.charCodeAt(0))|0,7);
   const api={level,tier,
-    seed(){RNG=mulberry(level*7919+hs);},
+    seed(){RNG=mulberry(level*7919+hs+(cz?1000003:0));},
     on(t,ev,fn,o){t.addEventListener(ev,fn,o);undo.push(()=>t.removeEventListener(ev,fn,o));},
     timer(fn,ms){const i=setInterval(fn,ms);undo.push(()=>clearInterval(i));},
     later(fn,ms){const i=setTimeout(fn,ms);undo.push(()=>clearTimeout(i));},
-    win(msg){const w=new Set(wonLv(g.id));w.add(level);save("lv_"+g.id,[...w]);
-      confetti();api.later(()=>confetti(110,innerWidth*.2,innerHeight*.5),250);api.later(()=>confetti(110,innerWidth*.8,innerHeight*.5),450);
-      const ov=modal([h("div",{class:"big"},"🏆"),h("h3",{},"Parabéns, "+CONFIG.nome+"!"),h("p",{},msg+" (fase "+level+")"),
-        h("div",{class:"cta"},h("button",{class:"btn main",onclick:()=>startLevel(g,pickLevel(g,level))},"Próxima fase 🎲"),h("button",{class:"btn",onclick:()=>{ov.remove();location.hash="";}},"Menu"))]);}
+    win(msg){const w=new Set(wonLv(g.id,cz));w.add(level);save(wonKey(g.id,cz),[...w]);
+      confetti(cz?240:170);api.later(()=>confetti(110,innerWidth*.2,innerHeight*.5),250);api.later(()=>confetti(110,innerWidth*.8,innerHeight*.5),450);
+      const ov=modal([h("div",{class:"big"},cz?"💀":"🏆"),h("h3",{},cz?"Digno de um Cinza, "+CONFIG.nome+"!":"Parabéns, "+CONFIG.nome+"!"),h("p",{},msg+(cz?" (desafio ":" (fase ")+level+")"),
+        h("div",{class:"cta"},h("button",{class:"btn main",onclick:()=>startLevel(g,pickLevel(g,cz,level),cz)},cz?"Próximo desafio 💀":"Próxima fase 🎲"),h("button",{class:"btn",onclick:()=>{ov.remove();location.hash="";}},"Menu"))]);}
   };
   g.fn(stage,api);
 }
